@@ -1,6 +1,6 @@
 grammar g;
 
-root : (stat | function)*
+root : stat*
     ;
 
 numlist : NUM+
@@ -18,9 +18,6 @@ expr : VAR expr+                                                        #funcioA
 
 stat : VAR '=:' expr                                                    #assignacio
     | expr                                                              #expressio
-    ;
-
-function : VAR '=:' expr+                                               #funcio          
     ;
 
 OPUNARI : '_'|']'|'i.'|[+\-*/%|^]':'|[+\-*/%|^]'/';

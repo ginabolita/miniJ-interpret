@@ -69,10 +69,5 @@ class gVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by gParser#funcio.
-    def visitFuncio(self, ctx:gParser.FuncioContext):
-        return self.visitChildren(ctx)
-
-
 
 del gParser

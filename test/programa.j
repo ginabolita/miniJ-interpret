@@ -1,11 +1,2 @@
 square =: *:
-
-mod2 =: 2 | ]
-eq0 =: 0 = ]
-
-parell =: eq0 @: mod2
-
-parell =: 0 = ] @: 2 | ]
-
-inc =: 1 + ]
-test =: +/ @: inc @: i.
+square 1 2 3 4    NB. resultat: 1 4 9 16
