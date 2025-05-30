@@ -13,8 +13,7 @@ else:
 
 class evalVisitor(gVisitor):
     def __init__(self):
-        self.symbols = {}
-        self.stack = []
+        self.variables = {}
 
     def visitRoot(self, ctx):
         for child in ctx.getChildren():
@@ -109,12 +108,15 @@ class evalVisitor(gVisitor):
             return fold_op(op[0], expr_val)
 
     def visitId(self, ctx):
-        return self.visitChildren(ctx)
-
+        name = ctx.VAR().getText()
+        value = self.variables.get(name)
+        print(f"[DEBUG] visitId: {name} = {value}")
+        return value
     def visitAssignacio(self, ctx):
         name = ctx.VAR().getText()
         expr_ctx = ctx.expr()
-        self.symbols[name] = expr_ctx
+        value = self.visit(expr_ctx)
+        self.variables[name] = value
         print(f"[DEBUG] Assigned symbol: {name} = {expr_ctx.getText()}")
         return None
 

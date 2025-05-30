@@ -46,8 +46,6 @@ def fold_op(op, expr):
     return result
 
 def apply_unary_op(op, expr):
-
-
     print(f"[DEBUG] apply_unary_op: op={op[0]}, expr={expr}")
     if op[1:] == ':':
         return double_op(op[0], expr)
