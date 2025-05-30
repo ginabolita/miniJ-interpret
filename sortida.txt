@@ -1,20 +1,49 @@
-(root (stat x =: (expr (numlist 1 2 3))))
-[DEBUG] Assigned symbol: x = 123
-(root (stat (expr (expr (numlist 1)) + (expr x))))
-[DEBUG] visitId: x = [1 2 3]
-[DEBUG] visitBinari: left=[1], op=+, right=[1 2 3]
-[DEBUG] visitBinari: applying aritmetic operation +
-2 3 4
-(root (stat (expr ] (expr x))))
-[DEBUG] visitId: x = [1 2 3]
-[DEBUG] visitUnari: op=], expr_ctx=x, expr_val=[1 2 3]
-1 2 3
-(root (stat y =: (expr (expr (numlist 1 1 1)) + (expr x))))
-[DEBUG] visitId: x = [1 2 3]
-[DEBUG] visitBinari: left=[1 1 1], op=+, right=[1 2 3]
-[DEBUG] visitBinari: applying aritmetic operation +
-[DEBUG] Assigned symbol: y = 111+x
-(root (stat (expr ] (expr y))))
-[DEBUG] visitId: y = [2 3 4]
-[DEBUG] visitUnari: op=], expr_ctx=y, expr_val=[2 3 4]
-2 3 4
+(root (stat square =: (expr *:)))
+[DEBUG] Assigned symbol: square = *:
+(root (stat (expr square (expr (expr (numlist 1)) + (expr i. (expr (numlist 3)))))))
+[DEBUG] visitUnari: op=i., expr_ctx=3, expr_val=[3]
+[DEBUG] apply_binary_op: op=+, left=[1], right=[0 1 2]
+[DEBUG] visitFuncioAplicada: args=[array([1, 2, 3])]
+[DEBUG] visitOpunariExpr: op=*:, applying apply_unary_op to [1 2 3]
+[DEBUG] apply_unary_op: op=*, expr=[1 2 3]
+[DEBUG] visitFuncioAplicada: result=[1 4 9]
+1 4 9
+root
+(root (stat mod2 =: (expr (expr (numlist 2)) | (expr ]))))
+[DEBUG] Assigned symbol: mod2 = 2|]
+(root (stat eq0 =: (expr (expr (numlist 0)) = (expr ]))))
+[DEBUG] Assigned symbol: eq0 = 0=]
+root
+(root (stat (expr eq0 (expr mod2 (expr i. (expr (numlist 6)))))))
+[DEBUG] visitUnari: op=i., expr_ctx=6, expr_val=[6]
+[DEBUG] visitFuncioAplicada: args=[array([0, 1, 2, 3, 4, 5])]
+[DEBUG] visitOpunariExpr: op=], applying apply_unary_op to [0 1 2 3 4 5]
+[DEBUG] apply_unary_op: op=], expr=[0 1 2 3 4 5]
+[DEBUG] apply_binary_op: op=|, left=[2], right=[0 1 2 3 4 5]
+[DEBUG] visitFuncioAplicada: result=[0 1 0 1 0 1]
+[DEBUG] visitFuncioAplicada: args=[array([0, 1, 0, 1, 0, 1])]
+[DEBUG] visitOpunariExpr: op=], applying apply_unary_op to [0 1 0 1 0 1]
+[DEBUG] apply_unary_op: op=], expr=[0 1 0 1 0 1]
+[DEBUG] apply_binary_op: op==, left=[0], right=[0 1 0 1 0 1]
+[DEBUG] visitFuncioAplicada: result=[ True False  True False  True False]
+1 0 1 0 1 0
+root
+(root (stat parell =: (expr eq0 (expr @:) (expr mod2))))
+[DEBUG] Assigned symbol: parell = eq0@:mod2
+(root (stat (expr parell (expr i. (expr (numlist 6))))))
+[DEBUG] visitUnari: op=i., expr_ctx=6, expr_val=[6]
+[DEBUG] visitFuncioAplicada: args=[array([0, 1, 2, 3, 4, 5])]
+[DEBUG] visitId: mod2 (function node) = [53 8]
+[DEBUG] visitFuncioAplicada: args=[<function evalVisitor.visitOpbinariExpr.<locals>.binop at 0x7ad27e70ef20>, <gParser.gParser.BinariContext object at 0x7ad27efa3bd0>]
+[DEBUG] visitOpunariExpr: op=], applying apply_unary_op to <function evalVisitor.visitOpbinariExpr.<locals>.binop at 0x7ad27e70ef20>
+[DEBUG] apply_unary_op: op=], expr=<function evalVisitor.visitOpbinariExpr.<locals>.binop at 0x7ad27e70ef20>
+[DEBUG] apply_binary_op: op==, left=[0], right=<function evalVisitor.visitOpbinariExpr.<locals>.binop at 0x7ad27e70ef20>
+[DEBUG] visitFuncioAplicada: result=[False]
+[DEBUG] visitFuncioAplicada: result=[False]
+0
+root
+(root (stat parell =: (expr (expr (numlist 0)) = (expr ] (expr @:)))) (stat (expr (expr (numlist 2)) | (expr ]))))
+[DEBUG] Assigned symbol: parell = 0=]@:
+[DEBUG] visitOpunariExpr: op=], applying apply_unary_op to [53 8]
+[DEBUG] apply_unary_op: op=], expr=[53 8]
+[DEBUG] apply_binary_op: op=|, left=[2], right=[53 8]

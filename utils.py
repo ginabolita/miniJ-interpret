@@ -86,10 +86,13 @@ def aritmetic_op(op, left, right):
 def relacional_op(op, left, right):
     if callable(left) and callable(right):
         return lambda x: relacionals[op](left(x), right(x))
+    return relacionals[op](left, right)
 
 def apply_binary_op(op, left, right):
     print(f"[DEBUG] apply_binary_op: op={op[0]}, left={left}, right={right}")
-    # if op == '@:':
-    # if op == '|':
-    # if op in relacionals:
-    # if op in aritmetics:
+    if op == '|':
+        return aritmetic_op(op, right, left)
+    if op in aritmetics:
+        return aritmetic_op(op, left, right)
+    if op in relacionals:
+        return relacional_op(op, left, right)
