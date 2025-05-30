@@ -20,6 +20,15 @@ relacionals = {
     '<>': np.not_equal
 }
 
+def identity_op(expr):
+    return expr
+
+def negate_op(expr):
+    return -expr
+
+def size_op(expr):
+    return np.array([len(expr)])
+
 def n_primers(n):
     return np.arange(n)
 
@@ -42,8 +51,19 @@ def relacional_op(op, expr1, expr2):
         return lambda x: relacionals[op](expr1(x), expr2(x))
 
 def apply_unary_op(op, expr):
-    # print(f"[DEBUG] apply_unary_op: op={op[0]}, expr={expr}")
+    print(f"[DEBUG] apply_unary_op: op={op[0]}, expr={expr}")
     if op[1:] == ':':
         return double_op(op[0], expr)
     if op[1:] == '/':
         return fold_op(op[0], expr)
+    if op == 'i.':
+        return n_primers(expr)
+    if op == ']':
+        return identity_op(expr)
+
+def apply_binary_op(op, expr1, expr2):
+    print(f"[DEBUG] apply_binary_op: op={op[0]}, expr1={expr1}, expr2={expr2}")
+    # if op == '@:':
+    # if op == '|':
+    # if op in relacionals:
+    # if op in aritmetics:

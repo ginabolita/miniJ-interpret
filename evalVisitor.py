@@ -40,6 +40,10 @@ class evalVisitor(gVisitor):
             op = symbol.OPUNARI().getText()
             print(f"[DEBUG] visitFuncioAplicada: opunari={op}")
             return apply_unary_op(op, args[0])
+        elif hasattr(symbol, 'OPBINARI'):
+            op = symbol.OPBINARI().getText()
+            print(f"[DEBUG] visitFuncioAplicada: opbinari={op}")
+            return apply_binary_op(op, args[0], args[1])
 
     def visitLlista(self, ctx):
         numlist_ctx = ctx.getChild(0)
@@ -47,14 +51,26 @@ class evalVisitor(gVisitor):
         return np.array(numbers)
 
     def visitUnari(self, ctx):
-        op = ctx.OPUNARI().getText()
+        op = ctx.OPUNARI().getText() if ctx.OPUNARI() else ctx.getChild(0).getText()
         expr_ctx = ctx.expr()
         expr_val = self.visit(expr_ctx)
         print(
             f"[DEBUG] visitUnari: op={op}, expr_ctx={expr_ctx.getText()}, expr_val={expr_val}"
         )
-        # You can implement the actual operation here if needed
-        # return expr_val  # or apply the operator to expr_val
+        if op == '#':
+            return size_op(expr_val)
+
+        if op == 'i.':
+            return n_primers(expr_val)
+        elif op == ']':
+            return identity_op(expr_val)
+        elif op == '_':
+            return negate_op(expr_val)
+        elif op[1:] == ':':
+            return double_op(op[0], expr_val)
+        elif op[1:] == '/':
+            return fold_op(op[0], expr_val)
+    
 
     def visitId(self, ctx):
         return self.visitChildren(ctx)
