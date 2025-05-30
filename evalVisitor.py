@@ -53,17 +53,9 @@ class evalVisitor(gVisitor):
             left = self.visit(children[0])
             op = children[1].getText()
             right = self.visit(children[3])
-            if isinstance(left, np.ndarray) and left.size == 1:
-                left = left.item()
-            if isinstance(right, np.ndarray) and right.size == 1:
-                right = right.item()
-            if op in aritmetics:
-                print(
-                    f"[DEBUG] visitBinari: flip operation {op} with expressions: {left}, {right}"
-                )
-                return aritmetics[op](left, right)
-            else:
-                raise ValueError(f"Operador desconegut: {op}")
+            print(f"[DEBUG] visitBinari: left={left}, op={op}, right={right}")
+            return flip_op(op, left, right)
+
 
         left = self.visit(ctx.getChild(0))
         op = ctx.getChild(1).getText()

@@ -20,7 +20,9 @@ relacionals = {
     '<>': np.not_equal
 }
 
-# OPERADORS UNARIS
+#######################
+## OPERADORS UNARIS ##
+#######################
 def identity_op(expr):
     return expr
 
@@ -55,28 +57,40 @@ def apply_unary_op(op, expr):
         return n_primers(expr)
     if op == ']':
         return identity_op(expr)
+#######################
+## OPERADORS BINARIS ##
+#######################
+def concatenate_op(left, right):
+    return np.append(left, right)
 
-# OPERADORS BINARIS
-def concatenate_op(expr1, expr2):
-    return np.append(expr1, expr2)
+def index_op(left, right):
+    return right[left]
 
-def index_op(expr1, expr2):
-    return expr2[expr1]
+def mask_op(left, right):
+    return right[left.astype(bool)]
 
-def mask_op(expr1, expr2):
-    return expr2[expr1.astype(bool)]
+def flip_op(op, left, right):
+    if isinstance(left, np.ndarray) and left.size == 1:
+        left = left.item()
+    if isinstance(right, np.ndarray) and right.size == 1:
+        right = right.item()
+    if op in aritmetics:
+        print(
+            f"[DEBUG] apply_flip_binop: flip operation {op} with expressions: {left}, {right}"
+        )
+        return aritmetic_op(op, left, right)
+    else:
+        raise ValueError(f"Operador desconegut: {op}")
 
-def aritmetic_op(op, expr1, expr2):
-    if callable(expr1) and callable(expr2):
-        return lambda x: aritmetics[op](expr1(x), expr2(x))
+def aritmetic_op(op, left, right):
+    return aritmetics[op](left, right)
 
-def relacional_op(op, expr1, expr2):
-    if callable(expr1) and callable(expr2):
-        return lambda x: relacionals[op](expr1(x), expr2(x))
+def relacional_op(op, left, right):
+    if callable(left) and callable(right):
+        return lambda x: relacionals[op](left(x), right(x))
 
-
-def apply_binary_op(op, expr1, expr2):
-    print(f"[DEBUG] apply_binary_op: op={op[0]}, expr1={expr1}, expr2={expr2}")
+def apply_binary_op(op, left, right):
+    print(f"[DEBUG] apply_binary_op: op={op[0]}, left={left}, right={right}")
     # if op == '@:':
     # if op == '|':
     # if op in relacionals:

@@ -1,3 +1,4 @@
 (root (stat (expr (expr (numlist 7)) | ~ (expr (numlist 2)))))
-[DEBUG] visitBinari: flip operation | with expressions: 7, 2
+[DEBUG] visitBinari: left=[7], op=|, right=[2]
+[DEBUG] apply_flip_binop: flip operation | with expressions: 7, 2
 1
