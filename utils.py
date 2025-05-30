@@ -20,6 +20,7 @@ relacionals = {
     '<>': np.not_equal
 }
 
+# OPERADORS UNARIS
 def identity_op(expr):
     return expr
 
@@ -42,15 +43,9 @@ def fold_op(op, expr):
         result = aritmetics[op](result, expr[i])
     return result
 
-def aritmetic_op(op, expr1, expr2):
-    if callable(expr1) and callable(expr2):
-        return lambda x: aritmetics[op](expr1(x), expr2(x))
-
-def relacional_op(op, expr1, expr2):
-    if callable(expr1) and callable(expr2):
-        return lambda x: relacionals[op](expr1(x), expr2(x))
-
 def apply_unary_op(op, expr):
+
+
     print(f"[DEBUG] apply_unary_op: op={op[0]}, expr={expr}")
     if op[1:] == ':':
         return double_op(op[0], expr)
@@ -60,6 +55,25 @@ def apply_unary_op(op, expr):
         return n_primers(expr)
     if op == ']':
         return identity_op(expr)
+
+# OPERADORS BINARIS
+def concatenate_op(expr1, expr2):
+    return np.append(expr1, expr2)
+
+def index_op(expr1, expr2):
+    return expr2[expr1]
+
+def mask_op(expr1, expr2):
+    return expr2[expr1.astype(bool)]
+
+def aritmetic_op(op, expr1, expr2):
+    if callable(expr1) and callable(expr2):
+        return lambda x: aritmetics[op](expr1(x), expr2(x))
+
+def relacional_op(op, expr1, expr2):
+    if callable(expr1) and callable(expr2):
+        return lambda x: relacionals[op](expr1(x), expr2(x))
+
 
 def apply_binary_op(op, expr1, expr2):
     print(f"[DEBUG] apply_binary_op: op={op[0]}, expr1={expr1}, expr2={expr2}")

@@ -1,1 +1,1 @@
-# 1 2 3 4    NB. resultat: 2
+7 | ~ 2    NB. resultat: 1

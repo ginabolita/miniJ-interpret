@@ -1,3 +1,3 @@
-(root (stat (expr # (expr (numlist 1 2 3 4)))))
-[DEBUG] visitUnari: op=#, expr_ctx=1234, expr_val=[1 2 3 4]
-4
+(root (stat (expr (expr (numlist 7)) | ~ (expr (numlist 2)))))
+[DEBUG] visitBinari: flip operation | with expressions: 7, 2
+1

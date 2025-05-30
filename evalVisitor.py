@@ -28,9 +28,6 @@ class evalVisitor(gVisitor):
     def visitParentesis(self, ctx):
         return self.visit(ctx.getChild(1))
 
-    def visitBinari(self, ctx):
-        return self.visitChildren(ctx)
-
     def visitFuncioAplicada(self, ctx):
         name = ctx.VAR().getText()
         args = [self.visit(child) for child in ctx.expr()]
@@ -49,6 +46,44 @@ class evalVisitor(gVisitor):
         numlist_ctx = ctx.getChild(0)
         numbers = [int(child.getText()) for child in numlist_ctx.getChildren()]
         return np.array(numbers)
+
+    def visitBinari(self, ctx):
+        children = list(ctx.getChildren())
+        if len(children) == 4 and children[2].getText() == '~':
+            left = self.visit(children[0])
+            op = children[1].getText()
+            right = self.visit(children[3])
+            if isinstance(left, np.ndarray) and left.size == 1:
+                left = left.item()
+            if isinstance(right, np.ndarray) and right.size == 1:
+                right = right.item()
+            if op in aritmetics:
+                print(
+                    f"[DEBUG] visitBinari: flip operation {op} with expressions: {left}, {right}"
+                )
+                return aritmetics[op](left, right)
+            else:
+                raise ValueError(f"Operador desconegut: {op}")
+
+        left = self.visit(ctx.getChild(0))
+        op = ctx.getChild(1).getText()
+        right = self.visit(ctx.getChild(2))
+        print(f"[DEBUG] visitBinari: left={left}, op={op}, right={right}")
+
+        if op == '#':
+            return mask_op(left, right)
+        elif op == '{':
+            return index_op(left, right)
+        elif op == ',':
+            return concatenate_op(left, right)
+        elif op == '|':
+            return aritmetic_op(op, right, left)
+        elif op in aritmetics:
+            return aritmetic_op(op, expr1, expr2)
+        elif op in relacionals:
+            return relacional_op(op, expr1, expr2)
+        else:
+            raise Exception(f"Unknown binary operator: {op}")
 
     def visitUnari(self, ctx):
         op = ctx.OPUNARI().getText() if ctx.OPUNARI() else ctx.getChild(0).getText()
@@ -70,7 +105,6 @@ class evalVisitor(gVisitor):
             return double_op(op[0], expr_val)
         elif op[1:] == '/':
             return fold_op(op[0], expr_val)
-    
 
     def visitId(self, ctx):
         return self.visitChildren(ctx)
