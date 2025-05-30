@@ -34,20 +34,27 @@ class evalVisitor(gVisitor):
     def visitFuncioAplicada(self, ctx):
         name = ctx.VAR().getText()
         args = [self.visit(child) for child in ctx.expr()]
+        print(f"[DEBUG] visitFuncioAplicada: args={args}")
         symbol = self.symbols.get(name)
-        # Here, decide if symbol is a value or a function train
-        # For example, if it's a function train, evaluate it with args
-        # If it's a value, return/apply as appropriate
-        # (You need to implement this logic based on your language semantics)
+        if hasattr(symbol, 'OPUNARI'):
+            op = symbol.OPUNARI().getText()
+            print(f"[DEBUG] visitFuncioAplicada: opunari={op}")
+            return apply_unary_op(op, args[0])
 
     def visitLlista(self, ctx):
         numlist_ctx = ctx.getChild(0)
         numbers = [int(child.getText()) for child in numlist_ctx.getChildren()]
         return np.array(numbers)
 
-
     def visitUnari(self, ctx):
-        return self.visitChildren(ctx)
+        op = ctx.OPUNARI().getText()
+        expr_ctx = ctx.expr()
+        expr_val = self.visit(expr_ctx)
+        print(
+            f"[DEBUG] visitUnari: op={op}, expr_ctx={expr_ctx.getText()}, expr_val={expr_val}"
+        )
+        # You can implement the actual operation here if needed
+        # return expr_val  # or apply the operator to expr_val
 
     def visitId(self, ctx):
         return self.visitChildren(ctx)

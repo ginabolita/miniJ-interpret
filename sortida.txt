@@ -1,3 +1,13 @@
 (root (stat square =: (expr *:)))
 [DEBUG] Assigned symbol: square = *:
 (root (stat (expr square (expr (numlist 1 2 3 4)))))
+[DEBUG] visitFuncioAplicada: args=[array([1, 2, 3, 4])]
+[DEBUG] visitFuncioAplicada: opunari=*:
+1 4 9 16
+root
+(root (stat hola =: (expr +/)))
+[DEBUG] Assigned symbol: hola = +/
+(root (stat (expr hola (expr (numlist 1 2 3)))))
+[DEBUG] visitFuncioAplicada: args=[array([1, 2, 3])]
+[DEBUG] visitFuncioAplicada: opunari=+/
+6

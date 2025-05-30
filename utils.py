@@ -40,3 +40,10 @@ def aritmetic_op(op, expr1, expr2):
 def relacional_op(op, expr1, expr2):
     if callable(expr1) and callable(expr2):
         return lambda x: relacionals[op](expr1(x), expr2(x))
+
+def apply_unary_op(op, expr):
+    # print(f"[DEBUG] apply_unary_op: op={op[0]}, expr={expr}")
+    if op[1:] == ':':
+        return double_op(op[0], expr)
+    if op[1:] == '/':
+        return fold_op(op[0], expr)
