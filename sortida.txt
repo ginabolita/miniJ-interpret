@@ -1,0 +1,11 @@
+(root (stat square =: (expr *:)))
+root
+(root (stat mod2 =: (expr (expr (numlist 2)) | (expr ]))))
+(root (stat eq0 =: (expr (expr (numlist 0)) = (expr ]))))
+root
+(root (stat parell =: (expr eq0 (expr @:) (expr mod2))))
+root
+(root (stat parell =: (expr (expr (numlist 0)) = (expr ] (expr @:)))) (stat (expr (expr (numlist 2)) | (expr ]))))
+root
+(root (stat inc =: (expr (expr (numlist 1)) + (expr ]))))
+(root (stat test =: (expr +/ (expr @:))) (stat (expr inc (expr @:) (expr i.))))

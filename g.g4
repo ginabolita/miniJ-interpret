@@ -12,13 +12,15 @@ expr : VAR expr+                                                        #funcioA
     | numlist                                                           #llista
     | '(' expr ')'                                                      #parentesis
     | VAR                                                               #id
+    | OPUNARI                                                           #opunariExpr
+    | OPBINARI                                                          #opbinariExpr
     ;
 
 stat : VAR '=:' expr                                                    #assignacio
     | expr                                                              #expressio
     ;
 
-function : VAR '=:' (OPUNARI|OPBINARI|NUM)+                             #funcio          
+function : VAR '=:' expr+                                               #funcio          
     ;
 
 OPUNARI : '_'|']'|'i.'|[+\-*/%|^]':'|[+\-*/%|^]'/';
