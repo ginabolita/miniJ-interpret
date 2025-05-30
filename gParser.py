@@ -16,19 +16,19 @@ def serializedATN():
         buf.write("\31\n\4\r\4\16\4\32\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3")
         buf.write("\4\3\4\5\4\'\n\4\3\4\3\4\3\4\3\4\3\4\5\4.\n\4\3\4\7\4")
         buf.write("\61\n\4\f\4\16\4\64\13\4\3\5\3\5\3\5\3\5\5\5:\n\5\3\5")
-        buf.write("\2\3\6\6\2\4\6\b\2\3\4\2\3\3\b\b\2D\2\r\3\2\2\2\4\21\3")
+        buf.write("\2\3\6\6\2\4\6\b\2\3\4\2\4\4\b\b\2D\2\r\3\2\2\2\4\21\3")
         buf.write("\2\2\2\6&\3\2\2\2\b9\3\2\2\2\n\f\5\b\5\2\13\n\3\2\2\2")
         buf.write("\f\17\3\2\2\2\r\13\3\2\2\2\r\16\3\2\2\2\16\3\3\2\2\2\17")
         buf.write("\r\3\2\2\2\20\22\7\n\2\2\21\20\3\2\2\2\22\23\3\2\2\2\23")
         buf.write("\21\3\2\2\2\23\24\3\2\2\2\24\5\3\2\2\2\25\26\b\4\1\2\26")
         buf.write("\30\7\13\2\2\27\31\5\6\4\2\30\27\3\2\2\2\31\32\3\2\2\2")
         buf.write("\32\30\3\2\2\2\32\33\3\2\2\2\33\'\3\2\2\2\34\35\t\2\2")
-        buf.write("\2\35\'\5\6\4\t\36\'\5\4\3\2\37 \7\5\2\2 !\5\6\4\2!\"")
+        buf.write("\2\35\'\5\6\4\b\36\'\5\4\3\2\37 \7\5\2\2 !\5\6\4\2!\"")
         buf.write("\7\6\2\2\"\'\3\2\2\2#\'\7\13\2\2$\'\7\b\2\2%\'\7\t\2\2")
         buf.write("&\25\3\2\2\2&\34\3\2\2\2&\36\3\2\2\2&\37\3\2\2\2&#\3\2")
-        buf.write("\2\2&$\3\2\2\2&%\3\2\2\2\'\62\3\2\2\2(-\f\b\2\2).\7\t")
-        buf.write("\2\2*+\7\t\2\2+.\7\4\2\2,.\7\3\2\2-)\3\2\2\2-*\3\2\2\2")
-        buf.write("-,\3\2\2\2./\3\2\2\2/\61\5\6\4\t\60(\3\2\2\2\61\64\3\2")
+        buf.write("\2\2&$\3\2\2\2&%\3\2\2\2\'\62\3\2\2\2(-\f\n\2\2).\7\t")
+        buf.write("\2\2*+\7\t\2\2+.\7\3\2\2,.\7\4\2\2-)\3\2\2\2-*\3\2\2\2")
+        buf.write("-,\3\2\2\2./\3\2\2\2/\61\5\6\4\n\60(\3\2\2\2\61\64\3\2")
         buf.write("\2\2\62\60\3\2\2\2\62\63\3\2\2\2\63\7\3\2\2\2\64\62\3")
         buf.write("\2\2\2\65\66\7\13\2\2\66\67\7\7\2\2\67:\5\6\4\28:\5\6")
         buf.write("\4\29\65\3\2\2\298\3\2\2\2:\t\3\2\2\2\t\r\23\32&-\629")
@@ -45,7 +45,7 @@ class gParser ( Parser ):
 
     sharedContextCache = PredictionContextCache()
 
-    literalNames = [ "<INVALID>", "'#'", "'~'", "'('", "')'", "'=:'" ]
+    literalNames = [ "<INVALID>", "'~'", "'#'", "'('", "')'", "'=:'" ]
 
     symbolicNames = [ "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
                       "<INVALID>", "<INVALID>", "OPUNARI", "OPBINARI", "NUM", 
@@ -115,7 +115,7 @@ class gParser ( Parser ):
             self.state = 11
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << gParser.T__0) | (1 << gParser.T__2) | (1 << gParser.OPUNARI) | (1 << gParser.OPBINARI) | (1 << gParser.NUM) | (1 << gParser.VAR))) != 0):
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << gParser.T__1) | (1 << gParser.T__2) | (1 << gParser.OPUNARI) | (1 << gParser.OPBINARI) | (1 << gParser.NUM) | (1 << gParser.VAR))) != 0):
                 self.state = 8
                 self.stat()
                 self.state = 13
@@ -387,13 +387,13 @@ class gParser ( Parser ):
                 _prevctx = localctx
                 self.state = 26
                 _la = self._input.LA(1)
-                if not(_la==gParser.T__0 or _la==gParser.OPUNARI):
+                if not(_la==gParser.T__1 or _la==gParser.OPUNARI):
                     self._errHandler.recoverInline(self)
                 else:
                     self._errHandler.reportMatch(self)
                     self.consume()
                 self.state = 27
-                self.expr(7)
+                self.expr(6)
                 pass
 
             elif la_ == 3:
@@ -453,9 +453,9 @@ class gParser ( Parser ):
                     localctx = gParser.BinariContext(self, gParser.ExprContext(self, _parentctx, _parentState))
                     self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
                     self.state = 38
-                    if not self.precpred(self._ctx, 6):
+                    if not self.precpred(self._ctx, 8):
                         from antlr4.error.Errors import FailedPredicateException
-                        raise FailedPredicateException(self, "self.precpred(self._ctx, 6)")
+                        raise FailedPredicateException(self, "self.precpred(self._ctx, 8)")
                     self.state = 43
                     self._errHandler.sync(self)
                     la_ = self._interp.adaptivePredict(self._input,4,self._ctx)
@@ -468,17 +468,17 @@ class gParser ( Parser ):
                         self.state = 40
                         self.match(gParser.OPBINARI)
                         self.state = 41
-                        self.match(gParser.T__1)
+                        self.match(gParser.T__0)
                         pass
 
                     elif la_ == 3:
                         self.state = 42
-                        self.match(gParser.T__0)
+                        self.match(gParser.T__1)
                         pass
 
 
                     self.state = 45
-                    self.expr(7) 
+                    self.expr(8) 
                 self.state = 50
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,5,self._ctx)
@@ -594,7 +594,7 @@ class gParser ( Parser ):
 
     def expr_sempred(self, localctx:ExprContext, predIndex:int):
             if predIndex == 0:
-                return self.precpred(self._ctx, 6)
+                return self.precpred(self._ctx, 8)
          
 
 

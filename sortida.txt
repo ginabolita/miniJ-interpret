@@ -1,4 +1,18 @@
-(root (stat (expr (expr (numlist 7)) | ~ (expr (numlist 2)))))
-[DEBUG] visitBinari: left=[7], op=|, right=[2]
-[DEBUG] apply_flip_binop: flip operation | with expressions: 7, 2
-1
+(root (stat (expr (expr (numlist 5)) + (expr (expr (numlist 2)) * (expr (numlist 3))))))
+[DEBUG] visitBinari: left=[2], op=*, right=[3]
+[DEBUG] visitBinari: applying aritmetic operation *
+[DEBUG] visitBinari: left=[5], op=+, right=[6]
+[DEBUG] visitBinari: applying aritmetic operation +
+11
+(root (stat (expr (expr (numlist 5)) * (expr (expr (numlist 2)) + (expr (numlist 3))))))
+[DEBUG] visitBinari: left=[2], op=+, right=[3]
+[DEBUG] visitBinari: applying aritmetic operation +
+[DEBUG] visitBinari: left=[5], op=*, right=[5]
+[DEBUG] visitBinari: applying aritmetic operation *
+25
+(root (stat (expr (expr ( (expr (expr (numlist 5)) * (expr (numlist 2))) )) + (expr (numlist 3)))))
+[DEBUG] visitBinari: left=[5], op=*, right=[2]
+[DEBUG] visitBinari: applying aritmetic operation *
+[DEBUG] visitBinari: left=[10], op=+, right=[3]
+[DEBUG] visitBinari: applying aritmetic operation +
+13

@@ -6,9 +6,9 @@ root : stat*
 numlist : NUM+
     ;
 
-expr : VAR expr+                                                        #funcioAplicada
+expr : <assoc=right> expr (OPBINARI|OPBINARI '~'|'#') expr               #binari 
+    | VAR expr+                                                        #funcioAplicada
     | (OPUNARI|'#') expr                                                #unari
-    | expr (OPBINARI|OPBINARI '~'|'#') expr                             #binari
     | numlist                                                           #llista
     | '(' expr ')'                                                      #parentesis
     | VAR                                                               #id

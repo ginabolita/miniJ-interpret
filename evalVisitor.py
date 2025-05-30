@@ -71,9 +71,19 @@ class evalVisitor(gVisitor):
         elif op == '|':
             return aritmetic_op(op, right, left)
         elif op in aritmetics:
-            return aritmetic_op(op, expr1, expr2)
+            if (
+                isinstance(left, np.ndarray)
+                and isinstance(right, np.ndarray)
+                and left.size != right.size
+                and left.size != 1
+                and right.size != 1
+            ):
+                print("length error")
+                return
+            print(f"[DEBUG] visitBinari: applying aritmetic operation {op}")
+            return aritmetic_op(op, left, right)
         elif op in relacionals:
-            return relacional_op(op, expr1, expr2)
+            return relacional_op(op, left, right)
         else:
             raise Exception(f"Unknown binary operator: {op}")
 
@@ -110,10 +120,3 @@ class evalVisitor(gVisitor):
 
     def visitExpressio(self, ctx):
         return self.visitChildren(ctx)
-
-    # def visitFuncio(self, ctx):
-    #     name = ctx.VAR().getText()
-    #     ops = [child.getText() for child in ctx.children[2:]]
-    #     self.functions[name] = ops
-    #     print(f"[DEBUG] self.functions={self.functions}")
-    #     return None
