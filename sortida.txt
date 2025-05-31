@@ -1,49 +1,45 @@
-(root (stat square =: (expr *:)))
-[DEBUG] Assigned symbol: square = *:
-(root (stat (expr square (expr (expr (numlist 1)) + (expr i. (expr (numlist 3)))))))
-[DEBUG] visitUnari: op=i., expr_ctx=3, expr_val=[3]
-[DEBUG] apply_binary_op: op=+, left=[1], right=[0 1 2]
-[DEBUG] visitFuncioAplicada: args=[array([1, 2, 3])]
-[DEBUG] visitOpunariExpr: op=*:, applying apply_unary_op to [1 2 3]
-[DEBUG] apply_unary_op: op=*, expr=[1 2 3]
-[DEBUG] visitFuncioAplicada: result=[1 4 9]
-1 4 9
 root
-(root (stat mod2 =: (expr (expr (numlist 2)) | (expr ]))))
-[DEBUG] Assigned symbol: mod2 = 2|]
-(root (stat eq0 =: (expr (expr (numlist 0)) = (expr ]))))
-[DEBUG] Assigned symbol: eq0 = 0=]
 root
-(root (stat (expr eq0 (expr mod2 (expr i. (expr (numlist 6)))))))
-[DEBUG] visitUnari: op=i., expr_ctx=6, expr_val=[6]
-[DEBUG] visitFuncioAplicada: args=[array([0, 1, 2, 3, 4, 5])]
-[DEBUG] visitOpunariExpr: op=], applying apply_unary_op to [0 1 2 3 4 5]
-[DEBUG] apply_unary_op: op=], expr=[0 1 2 3 4 5]
-[DEBUG] apply_binary_op: op=|, left=[2], right=[0 1 2 3 4 5]
-[DEBUG] visitFuncioAplicada: result=[0 1 0 1 0 1]
-[DEBUG] visitFuncioAplicada: args=[array([0, 1, 0, 1, 0, 1])]
-[DEBUG] visitOpunariExpr: op=], applying apply_unary_op to [0 1 0 1 0 1]
-[DEBUG] apply_unary_op: op=], expr=[0 1 0 1 0 1]
-[DEBUG] apply_binary_op: op==, left=[0], right=[0 1 0 1 0 1]
-[DEBUG] visitFuncioAplicada: result=[ True False  True False  True False]
-1 0 1 0 1 0
+(root (stat (expr (numlist 1))))
+1
+(root (stat (expr (numlist _1))))
+_1
+(root (stat (expr (numlist 0 10 _23 40000))))
+0 10 _23 40000
 root
-(root (stat parell =: (expr eq0 (expr @:) (expr mod2))))
-[DEBUG] Assigned symbol: parell = eq0@:mod2
-(root (stat (expr parell (expr i. (expr (numlist 6))))))
-[DEBUG] visitUnari: op=i., expr_ctx=6, expr_val=[6]
-[DEBUG] visitFuncioAplicada: args=[array([0, 1, 2, 3, 4, 5])]
-[DEBUG] visitId: mod2 (function node) = [53 8]
-[DEBUG] visitFuncioAplicada: args=[<function evalVisitor.visitOpbinariExpr.<locals>.binop at 0x7ad27e70ef20>, <gParser.gParser.BinariContext object at 0x7ad27efa3bd0>]
-[DEBUG] visitOpunariExpr: op=], applying apply_unary_op to <function evalVisitor.visitOpbinariExpr.<locals>.binop at 0x7ad27e70ef20>
-[DEBUG] apply_unary_op: op=], expr=<function evalVisitor.visitOpbinariExpr.<locals>.binop at 0x7ad27e70ef20>
-[DEBUG] apply_binary_op: op==, left=[0], right=<function evalVisitor.visitOpbinariExpr.<locals>.binop at 0x7ad27e70ef20>
-[DEBUG] visitFuncioAplicada: result=[False]
-[DEBUG] visitFuncioAplicada: result=[False]
-0
 root
-(root (stat parell =: (expr (expr (numlist 0)) = (expr ] (expr @:)))) (stat (expr (expr (numlist 2)) | (expr ]))))
-[DEBUG] Assigned symbol: parell = 0=]@:
-[DEBUG] visitOpunariExpr: op=], applying apply_unary_op to [53 8]
-[DEBUG] apply_unary_op: op=], expr=[53 8]
-[DEBUG] apply_binary_op: op=|, left=[2], right=[53 8]
+root
+(root (stat (expr (expr (numlist 12 _47 89 _34)) + (expr (numlist 5 76 _23 _91)))))
+17 29 66 _125
+(root (stat (expr (expr (numlist 44 _18 67 _10)) - (expr (numlist 99 32 _45 2)))))
+_55 _50 112 _12
+(root (stat (expr (expr (numlist 73 _54 26 _80)) * (expr (numlist 11 68 _37 92)))))
+803 _3672 _962 _7360
+(root (stat (expr (expr (numlist 39 _4 90 _7)) % (expr (numlist 13 2 _45 _23)))))
+3 _2 _2 0
+(root (stat (expr (expr (numlist 2 _10 23 _8)) | (expr (numlist 7 11 _20 _10)))))
+1 _9 3 _2
+(root (stat (expr (expr (numlist 2 _4 _5 10)) ^ (expr (numlist 3 2 3 3)))))
+8 16 _125 1000
+root
+root
+root
+(root (stat (expr (expr (numlist 5 5 5 _5 _5 _5)) > (expr (numlist _3 10 5 _10 2 _5)))))
+1 0 0 1 0 0
+(root (stat (expr (expr (numlist 5 5 5 _5 _5 _5)) >= (expr (numlist _3 10 5 _10 2 _5)))))
+1 0 1 1 0 1
+(root (stat (expr (expr (numlist 5 5 5 _5 _5 _5)) < (expr (numlist _3 10 5 _10 2 _5)))))
+0 1 0 0 1 0
+(root (stat (expr (expr (numlist 5 5 5 _5 _5 _5)) <= (expr (numlist _3 10 5 _10 2 _5)))))
+0 1 1 0 1 1
+(root (stat (expr (expr (numlist 10 10 _4 _4)) = (expr (numlist 10 _10 _4 4)))))
+1 0 1 0
+(root (stat (expr (expr (numlist 10 10 _4 _4)) <> (expr (numlist 10 _10 _4 4)))))
+0 1 0 1
+root
+root
+root
+(root (stat (expr (expr (numlist 100)) - (expr (expr (numlist 10)) * (expr (expr (numlist 2)) + (expr (numlist 5)))))))
+30
+(root (stat (expr (expr (numlist 100)) - (expr (expr ( (expr (expr (numlist 10)) * (expr (numlist 2))) )) + (expr (numlist 5))))))
+75

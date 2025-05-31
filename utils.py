@@ -1,14 +1,13 @@
 import numpy as np
-from antlr4 import *
 
 aritmetics = {
     '+': np.add,
     '-': np.subtract,
     '*': np.multiply,
     '%': np.divide,
-    '|': np.mod,
+    '|': lambda x, y: np.mod(y, x),
     '^': np.power,
-    ',': np.append,
+    ',': lambda x, y: np.concatenate((np.atleast_1d(x), np.atleast_1d(y))),
 }
 
 relacionals = {
@@ -20,24 +19,26 @@ relacionals = {
     '<>': np.not_equal
 }
 
-#######################
-## OPERADORS UNARIS ##
-#######################
-def identity_op(expr):
-    return expr
+unary_ops = {
+    '_': lambda x: -x,
+    ']': lambda x: x,
+    'i.': lambda x: np.arange(int(x[0]) if isinstance(x, list) else int(x)),
+    '#': lambda x: len(np.atleast_1d(x))
+}
 
-def negate_op(expr):
-    return -expr
 
-def size_op(expr):
-    return np.array([len(expr)])
+def check_length(left, right):
+    left_len = len(left)
+    right_len = len(right)
 
-def n_primers(n):
-    return np.arange(n)
+    if left_len == right_len:
+        return False
 
-def double_op(op, expr):
-    if op in aritmetics:
-        return aritmetics[op](expr, expr)
+    if left_len == 1 or right_len == 1:
+        return False
+
+    return True
+
 
 def fold_op(op, expr):
     result = expr[0]
@@ -45,54 +46,35 @@ def fold_op(op, expr):
         result = aritmetics[op](result, expr[i])
     return result
 
-def apply_unary_op(op, expr):
-    print(f"[DEBUG] apply_unary_op: op={op[0]}, expr={expr}")
-    if op[1:] == ':':
-        return double_op(op[0], expr)
-    if op[1:] == '/':
-        return fold_op(op[0], expr)
-    if op == 'i.':
-        return n_primers(expr)
-    if op == ']':
-        return identity_op(expr)
-#######################
-## OPERADORS BINARIS ##
-#######################
-def concatenate_op(left, right):
-    return np.append(left, right)
 
-def index_op(left, right):
-    return right[left]
+def apply_binary_operation(op, left, right):
+    left_arr = np.atleast_1d(left) if not isinstance(left,
+                                                     np.ndarray) else left
+    right_arr = np.atleast_1d(right) if not isinstance(right,
+                                                       np.ndarray) else right
 
-def mask_op(left, right):
-    return right[left.astype(bool)]
-
-def flip_op(op, left, right):
-    if isinstance(left, np.ndarray) and left.size == 1:
-        left = left.item()
-    if isinstance(right, np.ndarray) and right.size == 1:
-        right = right.item()
+    if op == '#':
+        if check_length(left_arr, right_arr):
+            raise ValueError(
+                "Operació '#' només es pot aplicar a llistes de la mateixa longitud."
+            )
+        return right_arr[left_arr.astype(bool).tolist()]
+    elif op == '{':
+        return right_arr[left_arr]
     if op in aritmetics:
-        print(
-            f"[DEBUG] apply_flip_binop: flip operation {op} with expressions: {left}, {right}"
-        )
-        return aritmetic_op(op, left, right)
+        result = aritmetics[op](left_arr, right_arr)
+    elif op in relacionals:
+        result = relacionals[op](left_arr, right_arr).astype(int)
     else:
-        raise ValueError(f"Operador desconegut: {op}")
+        raise ValueError(f"Operació desconeguda: {op}")
 
-def aritmetic_op(op, left, right):
-    return aritmetics[op](left, right)
+    return result.tolist() if isinstance(result, np.ndarray) else result
 
-def relacional_op(op, left, right):
-    if callable(left) and callable(right):
-        return lambda x: relacionals[op](left(x), right(x))
-    return relacionals[op](left, right)
 
-def apply_binary_op(op, left, right):
-    print(f"[DEBUG] apply_binary_op: op={op[0]}, left={left}, right={right}")
-    if op == '|':
-        return aritmetic_op(op, right, left)
-    if op in aritmetics:
-        return aritmetic_op(op, left, right)
-    if op in relacionals:
-        return relacional_op(op, left, right)
+def apply_unary_operation(op, expr):
+    if op in unary_ops:
+        return unary_ops[op](expr)
+    elif op[1:] == ':':
+        return apply_binary_operation(op[0], expr, expr)
+    elif op[1:] == '/':
+        return fold_op(op[0], expr)
