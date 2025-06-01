@@ -1,53 +1,53 @@
 import numpy as np
 
 UNARY_OPERATORS = [
-    '_',  # Negación
-    ']',  # Identidad
-    'i.',  # Secuencia (0 hasta n-1)
-    '#',  # Longitud
-    '+:',  # Duplicar suma
-    '-:',  # Duplicar resta
-    '*:',  # Duplicar multiplicación
-    '%:',  # Duplicar división
-    '|:',  # Duplicar módulo
-    '^:',  # Duplicar potencia
-    '+/',  # Fold suma
-    '-/',  # Fold resta
-    '*/',  # Fold multiplicación
-    '%/',  # Fold división
-    '|/',  # Fold módulo
-    '^/'  # Fold potencia
+    '_',
+    ']',
+    'i.',
+    '#',
+    '+:',
+    '-:',
+    '*:',
+    '%:',
+    '|:',
+    '^:',
+    '+/',
+    '-/',
+    '*/',
+    '%/',
+    '|/',
+    '^/'
 ]
 
 BINARY_OPERATORS = [
-    '+',  # Suma
-    '-',  # Resta
-    '*',  # Multiplicación
-    '%',  # División
-    '|',  # Módulo
-    '^',  # Potencia
-    '>',  # Mayor que
-    '<',  # Menor que
-    '>=',  # Mayor o igual que
-    '<=',  # Menor o igual que
-    '=',  # Igual que
-    '<>',  # Distinto que
-    ',',  # Concatenación
-    '@:',  # Operador especial
-    '{',  # Indexación
-    '#',  # Filtrado (especial en binario)
-    '+~',  # Suma conmutada
-    '-~',  # Resta conmutada
-    '*~',  # Multiplicación conmutada
-    '%~',  # División conmutada
-    '|~',  # Módulo conmutado
-    '^~',  # Potencia conmutada
-    '>~',  # Mayor que conmutado
-    '<~',  # Menor que conmutado
-    '>=~',  # Mayor o igual que conmutado
-    '<=~',  # Menor o igual que conmutado
-    '=~',  # Igual que conmutado
-    '<>~',  # Distinto que conmutado
+    '+',
+    '-',
+    '*',
+    '%',
+    '|',
+    '^',
+    '>',
+    '<',
+    '>=',
+    '<=',
+    '=',
+    '<>',
+    ',',
+    '@:',
+    '{',
+    '#',
+    '+~',
+    '-~',
+    '*~',
+    '%~',
+    '|~',
+    '^~',
+    '>~',
+    '<~',
+    '>=~',
+    '<=~',
+    '=~',
+    '<>~',
     ',~',
     '@:~',
     '{~'
@@ -86,45 +86,32 @@ def fold_op(op, expr):
     return result
 
 def apply_binary_operation(op, left, right):
-    # Cas especial per la concatenació
-    if op == '@:':
-        # Si és una llista o array, convertim per assegurar la concatenació
-        if isinstance(left, (list, np.ndarray)) or isinstance(right, (list, np.ndarray)):
-            return list(np.atleast_1d(left)) + list(np.atleast_1d(right))
-        else:
-            # Si no, fem una llista amb els dos elements
-            return [left, right]
-    
-    # Convertim a arrays per les operacions
+    if op == '@:':  # Composició
+        return list(np.atleast_1d(left)) + list(np.atleast_1d(right))
+
     left_arr = np.atleast_1d(left) if not isinstance(left, np.ndarray) else left
     right_arr = np.atleast_1d(right) if not isinstance(right, np.ndarray) else right
-    
-    # Operacions especials
-    if op == '#':
-        # Comprovem longituds compatibles
+
+    if op == '#':   # Màscara
         if len(left_arr) != len(right_arr) and len(left_arr) != 1 and len(right_arr) != 1:
-            raise ValueError("Ep! '#' necessita llistes de la mateixa longitud.")
+            raise ValueError("Error! '#' necessita llistes de la mateixa mida.")
         return right_arr[left_arr.astype(bool).tolist()]
-    
-    elif op == '{':
-        # Indexació
+
+    elif op == '{':        # Indexació
         return right_arr[left_arr]
-    
-    # Operacions normals
+
     if op in aritmetics:
         result = aritmetics[op](left_arr, right_arr)
     elif op in relacionals:
         result = relacionals[op](left_arr, right_arr).astype(int)
     else:
-        raise ValueError(f"No conec l'operació: {op}")
-    
-    # Convertim el resultat si cal
+        raise ValueError(f"Error! Operació desconeguda: {op}")
+
     if isinstance(result, np.ndarray):
         return result.tolist()
     return result
 
 def apply_unary_operation(op, expr):
-    # print(f"[D]: Applying unary operation '{op}' on {expr}")
     if op in unary_ops:
         r = unary_ops[op](expr)
         return r

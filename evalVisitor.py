@@ -173,7 +173,7 @@ class EvalVisitor(gVisitor):
                         if text_fill in self.symbols and isinstance(self.symbols[text_fill], list):
                             # Si és una referència a una funció ja definida
                             ops_func = self.symbols[text_fill]
-                            print(f"[D]: Resolved function '{text_fill}' to its definition: {ops_func}")
+                            # print(f"[D]: Resolved function '{text_fill}' to its definition: {ops_func}")
                             
                             # Afegim els operadors de la subfunció
                             if len(ops) == 1:
@@ -188,7 +188,7 @@ class EvalVisitor(gVisitor):
             
             # Guardem la funció al diccionari
             self.symbols[nom] = np.array(ops)
-            print(f"[D]: Stored function '{nom}' with operators: {self.symbols}")
+            # print(f"[D]: Stored function '{nom}' with operators: {self.symbols}")
         except Exception as e:
             print(f"Error definint funció: {str(e)}")
             raise ValueError(f"Problema amb la definició de la funció {nom}")
@@ -203,7 +203,7 @@ class EvalVisitor(gVisitor):
 
             # Obtenim la definició
             definicio = self.symbols[nom_funcio]
-            print(f"[DEBUG]: Definició trobada per '{nom_funcio}': {definicio}")
+            # print(f"[DEBUG]: Definició trobada per '{nom_funcio}': {definicio}")
 
             # Inicialitzem piles
             pila_ops = []
@@ -216,7 +216,7 @@ class EvalVisitor(gVisitor):
                     if operador in self.symbols and isinstance(self.symbols[operador], (np.ndarray, list)):
                         # Cas de funció dins funció
                         funcio_interna = self.symbols[operador]
-                        print(f"[DEBUG]: Expandint subfunció '{operador}': {funcio_interna}")
+                        # print(f"[DEBUG]: Expandint subfunció '{operador}': {funcio_interna}")
 
                         # Processem cada element de la subfunció
                         for op_intern in funcio_interna:
@@ -251,7 +251,7 @@ class EvalVisitor(gVisitor):
                                 pila_ops.append(operador)
                             else:
                                 # Podria ser variable o funció
-                                print(f"[DEBUG]: Element desconegut '{operador}', afegit a pila_ops")
+                                # print(f"[DEBUG]: Element desconegut '{operador}', afegit a pila_ops")
                                 pila_ops.append(operador)
                         except ValueError:
                             # Si falla la conversió a número
@@ -278,7 +278,7 @@ class EvalVisitor(gVisitor):
             for arg in llista_args:
                 pila_vals.append(arg)
 
-            print(f"[DEBUG]: Piles inicials - Operadors: {pila_ops}, Valors: {pila_vals}")
+            # print(f"[DEBUG]: Piles inicials - Operadors: {pila_ops}, Valors: {pila_vals}")
 
             # Avaluem l'expressió
             return self.avalua_piles(pila_ops, pila_vals)
