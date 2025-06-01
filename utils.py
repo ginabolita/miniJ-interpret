@@ -19,7 +19,6 @@ UNARY_OPERATORS = [
     '^/'  # Fold potencia
 ]
 
-# Lista de operadores binarios
 BINARY_OPERATORS = [
     '+',  # Suma
     '-',  # Resta
@@ -102,11 +101,15 @@ def fold_op(op, expr):
 
 
 def apply_binary_operation(op, left, right):
+    if op == '@:':
+        if isinstance(left, list) and isinstance(right, list):
+            return left + right  
+
     left_arr = np.atleast_1d(left) if not isinstance(left,
                                                      np.ndarray) else left
     right_arr = np.atleast_1d(right) if not isinstance(right,
                                                        np.ndarray) else right
-
+    
     if op == '#':
         if check_length(left_arr, right_arr):
             raise ValueError(

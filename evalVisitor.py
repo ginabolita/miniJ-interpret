@@ -159,11 +159,11 @@ class EvalVisitor(gVisitor):
             if not isinstance(child, TerminalNode):
                 arg = self.visit(child)
                 if arg is not None:
-                    args.insert(0, arg)
+                    args.append(arg)
         print(f"[D]: Function '{name}' called with arguments: {args}")
 
         for arg in args:
-            val_stack.insert(0, arg)
+            val_stack.append(arg)
         print(f"[D]: Initial stacks - Operators: {op_stack}, Values: {val_stack}")
 
         return self.evalua_amb_pila(op_stack, val_stack)
@@ -184,7 +184,7 @@ class EvalVisitor(gVisitor):
                 print(f"[D]: Applying unary operation '{op}' on value: {val}")
                 result = apply_unary_operation(op, val)
                 print(f"[D]: Result after unary operation: {result}")
-                val_stack.insert(0, result)
+                val_stack.append(result)
             elif op in BINARY_OPERATORS:
                 right = val_stack.pop()
                 left = val_stack.pop()
@@ -192,7 +192,7 @@ class EvalVisitor(gVisitor):
                 print(f"[D]: Applying binary operation '{op}' on values: {left}, {right}")
                 result = apply_binary_operation(op, left, right)
                 print(f"[D]: Result after binary operation: {result}")
-                val_stack.insert(0, result)
+                val_stack.append(result)
             else:
                 try:
                     if op.startswith('_'):
