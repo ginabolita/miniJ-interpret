@@ -1,2 +1,31 @@
-(root (stat f =: (expr i. expr)))
+(root (stat f =: (funcDefinition i.)))
+[D]: Visiting function definition
+[D]: Function name: f
+[D]: Child 0: i.
+[D]: Stored function 'f' with operators ['i.']
+[D]: Current symbols: {'f': ['i.']}
+(root (stat (expr f)))
+[D]: Visiting function call
+[D]: Function name: f
+[D]: Stored operators: ['i.']
+[D]: ID tokens: ['f']
+[D]: Number of ID tokens: 1
+[D]: value ['i.']
+[D]: Argument 0: f
+[D]: Variables stack: [['i.']]
+[D]: Functions stack: []
+(root (stat x =: (expr (numlist 10))))
 [D]: Visiting assignment
+[D]: Assigning 'x' with expression: 10
+[D]: Child 0: 10
+(root (stat (expr f x)))
+[D]: Visiting function call
+[D]: Function name: f
+[D]: Stored operators: ['i.']
+[D]: ID tokens: ['f', 'x']
+[D]: Number of ID tokens: 2
+[D]: value ['i.']
+[D]: Argument 0: f
+[D]: Argument 1: x
+[D]: Variables stack: [['i.'], array([10])]
+[D]: Functions stack: []

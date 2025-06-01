@@ -3,7 +3,8 @@ grammar g;
 root : stat*;
 
 stat : expr                                                 #expressio    
-     | ID '=:' expr                                        #assignacio         
+     | ID '=:' expr                                         #assignacio 
+     | ID '=:' funcDefinition                               #funcDef 
      ;
 
 expr : '(' expr ')'                                         #parentesis   
@@ -16,8 +17,10 @@ expr : '(' expr ')'                                         #parentesis
      ;
 
 
-numlist : NUM+;
+funcDefinition : (NUM | ID | OPBINARI | OPUNARI)+     
+     ;
 
+numlist : NUM+;
 OPUNARI : '_'                               
         | ']'                               
         | 'i.'                             

@@ -1,2 +1,4 @@
 f =: i.                                         NB. Asignació d'una funció
-f 
+f                                               NB. Resultat: i.
+x =: 10
+f x    

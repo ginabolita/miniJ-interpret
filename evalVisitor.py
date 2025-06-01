@@ -19,16 +19,21 @@ class EvalVisitor(gVisitor):
                 result = self.visit(child)
                 if result is not None:
                     results.append(result)
-                    if isinstance(result, list) or isinstance(
-                            result, np.ndarray):
-                        int_results = [int(x) for x in result]
-                        formatted = " ".join('_' +
-                                             str(abs(x)) if x < 0 else str(x)
-                                             for x in int_results)
-                        print(formatted)
-                    else:
-                        print(int(round(result)))
-        return results
+        
+        # Don't try to convert everything to int - handle different types appropriately
+        formatted_results = []
+        for result in results:
+            if isinstance(result, (int, float, np.ndarray, list)):
+                # Already a numeric type or array
+                formatted_results.append(result)
+            elif isinstance(result, str) and result.isdigit():
+                # String representation of a number
+                formatted_results.append(int(result))
+            else:
+                # Keep non-numeric values as is
+                formatted_results.append(result)
+                
+        return formatted_results
 
     def visitParentesis(self, ctx):
         return self.visit(ctx.expr())
@@ -74,6 +79,14 @@ class EvalVisitor(gVisitor):
     def visitAssignacio(self, ctx):
         print(f"[D]: Visiting assignment")
         name = ctx.ID().getText()
+        expr = ctx.expr()
+
+        print(f"[D]: Assigning '{name}' with expression: {expr.getText()}")
+        for i in range(expr.getChildCount()):
+            child_text = expr.getChild(i).getText()
+            print(f"[D]: Child {i}: {child_text}")
+
+
         value = self.visit(ctx.expr())
         if value is None:
             raise ValueError(f"Assignació per '{name}' és None")
@@ -92,12 +105,34 @@ class EvalVisitor(gVisitor):
         else:
             raise ValueError(f"Variable '{name}' no trobada al diccionari symbols")
 
+    def visitFuncDef(self, ctx):
+        print(f"[D]: Visiting function definition")
+        name = ctx.ID().getText()
+        funcDef = ctx.funcDefinition()
+        print(f"[D]: Function name: {name}")
+
+        operators = []
+
+        for i in range(funcDef.getChildCount()):
+            child_text = funcDef.getChild(i).getText()
+            print(f"[D]: Child {i}: {funcDef.getChild(i).getText()}")
+            operators.append(child_text)
+
+        self.symbols[name] = operators
+        print(f"[D]: Stored function '{name}' with operators {operators}")
+        print(f"[D]: Current symbols: {self.symbols}")
+        return self.symbols[name]
+
     def visitCall(self, ctx):
-        # print(f"[D]: Visiting function call")
+        print(f"[D]: Visiting function call")
         name = ctx.ID(0).getText()
-        args = self.symbols[name]
-        print (f"[D]: Function name: {name}")
-        print(f"[D]: Arguments: {args}")
+
+        if name not in self.symbols:
+            raise ValueError(f"Function '{name}' no definida al diccionari symbols")
+
+        stored_operators = self.symbols[name]
+        print(f"[D]: Function name: {name}")
+        print(f"[D]: Stored operators: {stored_operators}")
 
         variables = []
         functions = []
