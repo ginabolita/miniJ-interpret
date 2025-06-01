@@ -78,3 +78,4 @@ def apply_unary_operation(op, expr):
         return apply_binary_operation(op[0], expr, expr)
     elif op[1:] == '/':
         return fold_op(op[0], expr)
+
