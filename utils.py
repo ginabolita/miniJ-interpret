@@ -79,64 +79,49 @@ unary_ops = {
     '#': lambda x: len(np.atleast_1d(x))
 }
 
-
-def check_length(left, right):
-    left_len = len(left)
-    right_len = len(right)
-
-    if left_len == right_len:
-        return False
-
-    if left_len == 1 or right_len == 1:
-        return False
-
-    return True
-
-
 def fold_op(op, expr):
     result = expr[0]
     for i in range(1, len(expr)):
         result = aritmetics[op](result, expr[i])
     return result
 
-
 def apply_binary_operation(op, left, right):
+    # Cas especial per la concatenació
     if op == '@:':
-        # Si ambos son arrays numpy de strings, convertirlos a listas antes de concatenar
-        if isinstance(left, np.ndarray) and left.dtype.kind == 'U' and \
-           isinstance(right, np.ndarray) and right.dtype.kind == 'U':
-            return list(left) + list(right)
-        # Si son listas o arrays, concatenarlos
-        elif isinstance(left, (list, np.ndarray)) and isinstance(
-                right, (list, np.ndarray)):
-            # Convertir ambos a listas para una concatenación segura
-            return list(left) + list(right)
+        # Si és una llista o array, convertim per assegurar la concatenació
+        if isinstance(left, (list, np.ndarray)) or isinstance(right, (list, np.ndarray)):
+            return list(np.atleast_1d(left)) + list(np.atleast_1d(right))
         else:
-            # Para tipos no compatibles, intentar concatenación normal
+            # Si no, fem una llista amb els dos elements
             return [left, right]
-
-    left_arr = np.atleast_1d(left) if not isinstance(left,
-                                                     np.ndarray) else left
-    right_arr = np.atleast_1d(right) if not isinstance(right,
-                                                       np.ndarray) else right
-
+    
+    # Convertim a arrays per les operacions
+    left_arr = np.atleast_1d(left) if not isinstance(left, np.ndarray) else left
+    right_arr = np.atleast_1d(right) if not isinstance(right, np.ndarray) else right
+    
+    # Operacions especials
     if op == '#':
-        if check_length(left_arr, right_arr):
-            raise ValueError(
-                "Operació '#' només es pot aplicar a llistes de la mateixa longitud."
-            )
+        # Comprovem longituds compatibles
+        if len(left_arr) != len(right_arr) and len(left_arr) != 1 and len(right_arr) != 1:
+            raise ValueError("Ep! '#' necessita llistes de la mateixa longitud.")
         return right_arr[left_arr.astype(bool).tolist()]
+    
     elif op == '{':
+        # Indexació
         return right_arr[left_arr]
+    
+    # Operacions normals
     if op in aritmetics:
         result = aritmetics[op](left_arr, right_arr)
     elif op in relacionals:
         result = relacionals[op](left_arr, right_arr).astype(int)
     else:
-        raise ValueError(f"Operació desconeguda: {op}")
-
-    return result.tolist() if isinstance(result, np.ndarray) else result
-
+        raise ValueError(f"No conec l'operació: {op}")
+    
+    # Convertim el resultat si cal
+    if isinstance(result, np.ndarray):
+        return result.tolist()
+    return result
 
 def apply_unary_operation(op, expr):
     # print(f"[D]: Applying unary operation '{op}' on {expr}")
