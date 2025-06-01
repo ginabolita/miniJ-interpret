@@ -14,7 +14,7 @@ def main():
             token_stream = CommonTokenStream(lexer)
             parser = gParser(token_stream)
             tree = parser.root()
-            print(tree.toStringTree(recog=parser))
+            # print(tree.toStringTree(recog=parser))
             result = visitor.visit(tree)
 
 if __name__ == '__main__':

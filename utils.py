@@ -48,7 +48,7 @@ BINARY_OPERATORS = [
     '<=~',  # Menor o igual que conmutado
     '=~',  # Igual que conmutado
     '<>~',  # Distinto que conmutado
-    ',~', 
+    ',~',
     '@:~',
     '{~'
 ]
@@ -102,14 +102,24 @@ def fold_op(op, expr):
 
 def apply_binary_operation(op, left, right):
     if op == '@:':
-        if isinstance(left, list) and isinstance(right, list):
-            return left + right  
+        # Si ambos son arrays numpy de strings, convertirlos a listas antes de concatenar
+        if isinstance(left, np.ndarray) and left.dtype.kind == 'U' and \
+           isinstance(right, np.ndarray) and right.dtype.kind == 'U':
+            return list(left) + list(right)
+        # Si son listas o arrays, concatenarlos
+        elif isinstance(left, (list, np.ndarray)) and isinstance(
+                right, (list, np.ndarray)):
+            # Convertir ambos a listas para una concatenación segura
+            return list(left) + list(right)
+        else:
+            # Para tipos no compatibles, intentar concatenación normal
+            return [left, right]
 
     left_arr = np.atleast_1d(left) if not isinstance(left,
                                                      np.ndarray) else left
     right_arr = np.atleast_1d(right) if not isinstance(right,
                                                        np.ndarray) else right
-    
+
     if op == '#':
         if check_length(left_arr, right_arr):
             raise ValueError(
