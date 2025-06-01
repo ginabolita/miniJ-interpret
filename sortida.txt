@@ -1,27 +1,24 @@
-[D]: Processing child '*:' in function definition
 [D]: Stored function 'square' with operators: {'square': array(['*:'], dtype='<U2')}
+[D]: Function definition for 'square': ['*:']
 [D]: Initial stacks - Operators: ['*:'], Values: [[1, 2, 3]]
 1 4 9
-[D]: Processing child '2' in function definition
-[D]: Processing child '|' in function definition
-[D]: Processing child ']' in function definition
 [D]: Stored function 'mod2' with operators: {'square': array(['*:'], dtype='<U2'), 'mod2': array(['2', '|', ']'], dtype='<U1')}
-[D]: Processing child '0' in function definition
-[D]: Processing child '=' in function definition
-[D]: Processing child ']' in function definition
 [D]: Stored function 'eq0' with operators: {'square': array(['*:'], dtype='<U2'), 'mod2': array(['2', '|', ']'], dtype='<U1'), 'eq0': array(['0', '=', ']'], dtype='<U1')}
+[D]: Function definition for 'eq0': ['0' '=' ']']
+[D]: Function definition for 'mod2': ['2' '|' ']']
 [D]: Initial stacks - Operators: ['|', ']'], Values: [2, array([0, 1, 2, 3, 4, 5])]
 [D]: Initial stacks - Operators: ['=', ']'], Values: [0, [0, 1, 0, 1, 0, 1]]
 1 0 1 0 1 0
+[D]: Function definition for 'parell': ['0' '=' ']' '2' '|' ']']
 [D]: Initial stacks - Operators: ['=', ']', '|', ']'], Values: [0, 2, array([0, 1, 2, 3, 4, 5])]
 1 0 1 0 1 0
-[D]: Processing child '0' in function definition
-[D]: Processing child '=' in function definition
-[D]: Processing child ']' in function definition
-[D]: Processing child '@:' in function definition
-[D]: Processing child '2' in function definition
-[D]: Processing child '|' in function definition
-[D]: Processing child ']' in function definition
 [D]: Stored function 'parell' with operators: {'square': array(['*:'], dtype='<U2'), 'mod2': array(['2', '|', ']'], dtype='<U1'), 'eq0': array(['0', '=', ']'], dtype='<U1'), 'parell': array(['0', '=', ']', '2', '|', ']'], dtype='<U1')}
+[D]: Function definition for 'parell': ['0' '=' ']' '2' '|' ']']
 [D]: Initial stacks - Operators: ['=', ']', '|', ']'], Values: [0, 2, array([0, 1, 2, 3, 4, 5])]
 1 0 1 0 1 0
+[D]: Stored function 'inc' with operators: {'square': array(['*:'], dtype='<U2'), 'mod2': array(['2', '|', ']'], dtype='<U1'), 'eq0': array(['0', '=', ']'], dtype='<U1'), 'parell': array(['0', '=', ']', '2', '|', ']'], dtype='<U1'), 'inc': array(['1', '+', ']'], dtype='<U1')}
+[D]: Stored function 'test' with operators: {'square': array(['*:'], dtype='<U2'), 'mod2': array(['2', '|', ']'], dtype='<U1'), 'eq0': array(['0', '=', ']'], dtype='<U1'), 'parell': array(['0', '=', ']', '2', '|', ']'], dtype='<U1'), 'inc': array(['1', '+', ']'], dtype='<U1'), 'test': array(['+/', 'inc', 'i.'], dtype='<U3')}
+[D]: Function definition for 'test': ['+/' 'inc' 'i.']
+[D]: Expanding function 'inc': ['1' '+' ']']
+[D]: Initial stacks - Operators: ['+/', '+', ']', 'i.'], Values: [1, [3]]
+6

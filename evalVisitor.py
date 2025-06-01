@@ -108,7 +108,7 @@ class EvalVisitor(gVisitor):
         operators = []
         for i in range(funcDef.getChildCount()):
             child_text = funcDef.getChild(i).getText()
-            print(f"[D]: Processing child '{child_text}' in function definition")
+            # print(f"[D]: Processing child '{child_text}' in function definition")
             if child_text != '@:': 
                 if child_text in self.symbols and isinstance(
                         self.symbols[child_text], list):
@@ -129,40 +129,60 @@ class EvalVisitor(gVisitor):
         # return operators
 
     def visitFunction(self, ctx):
-        # print(f"[D]: Visiting function")
         name = ctx.ID().getText()
         if name not in self.symbols:
             raise ValueError(f"Function '{name}' no definida")
+        
         func_def = self.symbols[name]
-        # print(f"[D]: Function definition for '{name}': {func_def}")
+        print(f"[D]: Function definition for '{name}': {func_def}")
 
         op_stack = []
         val_stack = []
 
+        # Expandir función completamente antes de procesar
         for op in func_def:
-            try:
-                if op.startswith('_'):
-                    val = -int(op[1:])
-                    val_stack.append(val)
-                    # print(f"[D]: Added numeric value to val_stack from function definition: {val}")
-                else:
-                    val = int(op)
-                    val_stack.append(val)
-                    # print(f"[D]: Added numeric value to val_stack from function definition: {val}")
-            except ValueError:
-                if op == '@:':
-                    # no afegir a la pila, la logica ja s'implementa
-                    continue
-                elif op in UNARY_OPERATORS or op in BINARY_OPERATORS:        
-                    op_stack.append(op)
-                elif op in self.symbols:
-                    val = self.symbols[op]
-                    val_stack.append(val)
-                    # print(f"[D]: Added variable value to val_stack: {val}")
-                else:
-                    # Si no es reconocido, imprimir un mensaje para diagnosticar
-                    print(f"[D]: Operator '{op}' not recognized as unary or binary, adding to op_stack anyway")
-                    op_stack.append(op)
+            if op in self.symbols and isinstance(self.symbols[op], (np.ndarray, list)):
+                # Si es una referencia a otra función, expandir sus operadores
+                inner_func = self.symbols[op]
+                print(f"[D]: Expanding function '{op}': {inner_func}")
+                
+                # Procesar cada operador de la función interna
+                for inner_op in inner_func:
+                    try:
+                        # Intentar interpretar como número
+                        if inner_op.startswith('_'):
+                            val = -int(inner_op[1:])
+                            val_stack.append(val)
+                        else:
+                            val = int(inner_op)
+                            val_stack.append(val)
+                    except ValueError:
+                        # No es un número, añadir a la pila de operadores
+                        if inner_op != '@:':  # Ignorar el operador de composición
+                            op_stack.append(inner_op)
+            else:
+                try:
+                    # Intentar interpretar como número
+                    if op.startswith('_'):
+                        val = -int(op[1:])
+                        val_stack.append(val)
+                    else:
+                        val = int(op)
+                        val_stack.append(val)
+                except ValueError:
+                    # No es un número, añadir a la pila de operadores
+                    if op == '@:':
+                        # Ignorar el operador de composición
+                        continue
+                    elif op in UNARY_OPERATORS or op in BINARY_OPERATORS:
+                        op_stack.append(op)
+                    else:
+                        # Si no se reconoce, podría ser otra función o variable
+                        # Para este caso específico, lo añadimos a la pila de operadores
+                        print(f"[D]: Unrecognized operator '{op}', adding to op_stack")
+                        op_stack.append(op)
+
+        # Recopilar argumentos
         args = []
         for i in range(1, ctx.getChildCount()):
             child = ctx.getChild(i)
@@ -170,12 +190,13 @@ class EvalVisitor(gVisitor):
                 arg = self.visit(child)
                 if arg is not None:
                     args.append(arg)
-        # print(f"[D]: Function '{name}' called with arguments: {args}")
 
+        # Añadir argumentos a la pila de valores
         for arg in args:
             val_stack.append(arg)
-        print(f"[D]: Initial stacks - Operators: {op_stack}, Values: {val_stack}")
 
+        print(f"[D]: Initial stacks - Operators: {op_stack}, Values: {val_stack}")
+        
         return self.evalua_amb_pila(op_stack, val_stack)
 
     def evalua_amb_pila(self, op_stack, val_stack):
