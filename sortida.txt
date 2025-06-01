@@ -1,31 +1,60 @@
-(root (stat f =: (funcDefinition i.)))
-[D]: Visiting function definition
-[D]: Function name: f
-[D]: Child 0: i.
-[D]: Stored function 'f' with operators ['i.']
-[D]: Current symbols: {'f': ['i.']}
-(root (stat (expr f)))
-[D]: Visiting function call
-[D]: Function name: f
-[D]: Stored operators: ['i.']
-[D]: ID tokens: ['f']
-[D]: Number of ID tokens: 1
-[D]: value ['i.']
-[D]: Argument 0: f
-[D]: Variables stack: [['i.']]
-[D]: Functions stack: []
-(root (stat x =: (expr (numlist 10))))
-[D]: Visiting assignment
-[D]: Assigning 'x' with expression: 10
-[D]: Child 0: 10
-(root (stat (expr f x)))
-[D]: Visiting function call
-[D]: Function name: f
-[D]: Stored operators: ['i.']
-[D]: ID tokens: ['f', 'x']
-[D]: Number of ID tokens: 2
-[D]: value ['i.']
-[D]: Argument 0: f
-[D]: Argument 1: x
-[D]: Variables stack: [['i.'], array([10])]
-[D]: Functions stack: []
+(root (stat square =: (funcDefinition *:)))
+[D]: Stored function 'square' with operators ['*:']
+['*:']
+(root (stat (expr square (expr (expr (numlist 1)) + (expr i. (expr (numlist 3)))))))
+[D]: Visiting function
+[D]: Function definition for 'square': ['*:']
+[D]: Added operator to op_stack: *:
+[D]: Function 'square' called with arguments: [[1, 2, 3]]
+[D]: Initial stacks - Operators: ['*:'], Values: [[1, 2, 3]]
+[D]: Evaluating with stacks - Operators: ['*:'], Values: [[1, 2, 3]]
+[D]: Current operator stack: ['*:']
+[D]: Current value stack: [[1, 2, 3]]
+[D]: Applying unary operation '*:' on value: [1, 2, 3]
+[D]: Result after unary operation: [1, 4, 9]
+[D]: Final result after evaluation: [1, 4, 9]
+[1, 4, 9]
+root
+(root (stat mod2 =: (funcDefinition 2 | ])))
+[D]: Stored function 'mod2' with operators ['2', '|', ']']
+['2', '|', ']']
+(root (stat eq0 =: (funcDefinition 0 = ])))
+[D]: Stored function 'eq0' with operators ['0', '=', ']']
+['0', '=', ']']
+root
+(root (stat (expr eq0 (expr mod2 (expr i. (expr (numlist 6)))))))
+[D]: Visiting function
+[D]: Function definition for 'eq0': ['0', '=', ']']
+[D]: Added numeric value to val_stack from function definition: 0
+[D]: Added operator to op_stack: =
+[D]: Added operator to op_stack: ]
+[D]: Visiting function
+[D]: Function definition for 'mod2': ['2', '|', ']']
+[D]: Added numeric value to val_stack from function definition: 2
+[D]: Added operator to op_stack: |
+[D]: Added operator to op_stack: ]
+[D]: Function 'mod2' called with arguments: [array([0, 1, 2, 3, 4, 5])]
+[D]: Initial stacks - Operators: ['|', ']'], Values: [array([0, 1, 2, 3, 4, 5]), 2]
+[D]: Evaluating with stacks - Operators: ['|', ']'], Values: [array([0, 1, 2, 3, 4, 5]), 2]
+[D]: Current operator stack: ['|', ']']
+[D]: Current value stack: [array([0, 1, 2, 3, 4, 5]), 2]
+[D]: Applying unary operation ']' on value: 2
+[D]: Result after unary operation: 2
+[D]: Current operator stack: ['|']
+[D]: Current value stack: [2, array([0, 1, 2, 3, 4, 5])]
+[D]: Applying binary operation '|' on values: 2, [0 1 2 3 4 5]
+[D]: Result after binary operation: [0, 1, 0, 1, 0, 1]
+[D]: Final result after evaluation: [0, 1, 0, 1, 0, 1]
+[D]: Function 'eq0' called with arguments: [[0, 1, 0, 1, 0, 1]]
+[D]: Initial stacks - Operators: ['=', ']'], Values: [[0, 1, 0, 1, 0, 1], 0]
+[D]: Evaluating with stacks - Operators: ['=', ']'], Values: [[0, 1, 0, 1, 0, 1], 0]
+[D]: Current operator stack: ['=', ']']
+[D]: Current value stack: [[0, 1, 0, 1, 0, 1], 0]
+[D]: Applying unary operation ']' on value: 0
+[D]: Result after unary operation: 0
+[D]: Current operator stack: ['=']
+[D]: Current value stack: [0, [0, 1, 0, 1, 0, 1]]
+[D]: Applying binary operation '=' on values: 0, [0, 1, 0, 1, 0, 1]
+[D]: Result after binary operation: [1, 0, 1, 0, 1, 0]
+[D]: Final result after evaluation: [1, 0, 1, 0, 1, 0]
+[1, 0, 1, 0, 1, 0]

@@ -1,5 +1,59 @@
 import numpy as np
 
+UNARY_OPERATORS = [
+    '_',  # Negación
+    ']',  # Identidad
+    'i.',  # Secuencia (0 hasta n-1)
+    '#',  # Longitud
+    '+:',  # Duplicar suma
+    '-:',  # Duplicar resta
+    '*:',  # Duplicar multiplicación
+    '%:',  # Duplicar división
+    '|:',  # Duplicar módulo
+    '^:',  # Duplicar potencia
+    '+/',  # Fold suma
+    '-/',  # Fold resta
+    '*/',  # Fold multiplicación
+    '%/',  # Fold división
+    '|/',  # Fold módulo
+    '^/'  # Fold potencia
+]
+
+# Lista de operadores binarios
+BINARY_OPERATORS = [
+    '+',  # Suma
+    '-',  # Resta
+    '*',  # Multiplicación
+    '%',  # División
+    '|',  # Módulo
+    '^',  # Potencia
+    '>',  # Mayor que
+    '<',  # Menor que
+    '>=',  # Mayor o igual que
+    '<=',  # Menor o igual que
+    '=',  # Igual que
+    '<>',  # Distinto que
+    ',',  # Concatenación
+    '@:',  # Operador especial
+    '{',  # Indexación
+    '#',  # Filtrado (especial en binario)
+    '+~',  # Suma conmutada
+    '-~',  # Resta conmutada
+    '*~',  # Multiplicación conmutada
+    '%~',  # División conmutada
+    '|~',  # Módulo conmutado
+    '^~',  # Potencia conmutada
+    '>~',  # Mayor que conmutado
+    '<~',  # Menor que conmutado
+    '>=~',  # Mayor o igual que conmutado
+    '<=~',  # Menor o igual que conmutado
+    '=~',  # Igual que conmutado
+    '<>~',  # Distinto que conmutado
+    ',~', 
+    '@:~',
+    '{~'
+]
+
 aritmetics = {
     '+': np.add,
     '-': np.subtract,
@@ -72,10 +126,11 @@ def apply_binary_operation(op, left, right):
 
 
 def apply_unary_operation(op, expr):
+    # print(f"[D]: Applying unary operation '{op}' on {expr}")
     if op in unary_ops:
-        return unary_ops[op](expr)
+        r = unary_ops[op](expr)
+        return r
     elif op[1:] == ':':
         return apply_binary_operation(op[0], expr, expr)
     elif op[1:] == '/':
         return fold_op(op[0], expr)
-

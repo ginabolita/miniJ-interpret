@@ -19,7 +19,7 @@ class EvalVisitor(gVisitor):
                 result = self.visit(child)
                 if result is not None:
                     results.append(result)
-        
+
         # Don't try to convert everything to int - handle different types appropriately
         formatted_results = []
         for result in results:
@@ -32,7 +32,9 @@ class EvalVisitor(gVisitor):
             else:
                 # Keep non-numeric values as is
                 formatted_results.append(result)
-                
+
+        for r in formatted_results:
+            print(r)
         return formatted_results
 
     def visitParentesis(self, ctx):
@@ -54,7 +56,7 @@ class EvalVisitor(gVisitor):
         return numbers
 
     def visitBinari(self, ctx):
-        # print(f"[D]: Visiting binary operation")
+        # print(f"[D]:Binary operation")
         left = self.visit(ctx.expr(0))
         right = self.visit(ctx.expr(1))
         op = ctx.getChild(1).getText().strip('~')
@@ -69,23 +71,21 @@ class EvalVisitor(gVisitor):
         return apply_binary_operation(op, left, right)
 
     def visitUnari(self, ctx):
+        # print(f"[D]: Unary operation '{ctx.getText()}'")
         if ctx.OPUNARI():
             op = ctx.OPUNARI().getText()
         else:
             op = ctx.getChild(0).getText()
+
         expr = self.visit(ctx.expr())
         return apply_unary_operation(op, expr)
 
     def visitAssignacio(self, ctx):
-        print(f"[D]: Visiting assignment")
+        # print(f"[D]: Visiting assignment")
         name = ctx.ID().getText()
         expr = ctx.expr()
 
         print(f"[D]: Assigning '{name}' with expression: {expr.getText()}")
-        for i in range(expr.getChildCount()):
-            child_text = expr.getChild(i).getText()
-            print(f"[D]: Child {i}: {child_text}")
-
 
         value = self.visit(ctx.expr())
         if value is None:
@@ -94,11 +94,11 @@ class EvalVisitor(gVisitor):
             value = np.array(value)
 
         self.symbols[name] = value
-
-        return value
+        print(f"[D]: Stored '{name}' with value: {value}")
+        # return value
 
     def visitId(self, ctx):
-        print(f"[D]: Visiting identifier")
+        # print(f"[D]: Visiting identifier")
         name = ctx.ID().getText()
         if name in self.symbols:
             return self.symbols[name]
@@ -106,105 +106,115 @@ class EvalVisitor(gVisitor):
             raise ValueError(f"Variable '{name}' no trobada al diccionari symbols")
 
     def visitFuncDef(self, ctx):
-        print(f"[D]: Visiting function definition")
+        # print(f"[D]: Visiting function definition")
         name = ctx.ID().getText()
         funcDef = ctx.funcDefinition()
-        print(f"[D]: Function name: {name}")
 
         operators = []
-
         for i in range(funcDef.getChildCount()):
             child_text = funcDef.getChild(i).getText()
-            print(f"[D]: Child {i}: {funcDef.getChild(i).getText()}")
             operators.append(child_text)
 
         self.symbols[name] = operators
         print(f"[D]: Stored function '{name}' with operators {operators}")
-        print(f"[D]: Current symbols: {self.symbols}")
         return self.symbols[name]
 
-    def visitCall(self, ctx):
-        print(f"[D]: Visiting function call")
-        name = ctx.ID(0).getText()
-
+    def visitFunction(self, ctx):
+        print(f"[D]: Visiting function")
+        name = ctx.ID().getText()
         if name not in self.symbols:
-            raise ValueError(f"Function '{name}' no definida al diccionari symbols")
+            raise ValueError(f"Function '{name}' no definida")
+        func_def = self.symbols[name]
+        print(f"[D]: Function definition for '{name}': {func_def}")
 
-        stored_operators = self.symbols[name]
-        print(f"[D]: Function name: {name}")
-        print(f"[D]: Stored operators: {stored_operators}")
+        op_stack = []
+        val_stack = []
 
-        variables = []
-        functions = []
+        for op in func_def:
+            try:
+                if op.startswith('_'):
+                    val = -int(op[1:])
+                    val_stack.append(val)
+                    print(f"[D]: Added numeric value to val_stack from function definition: {val}")
+                else:
+                    val = int(op)
+                    val_stack.append(val)
+                    print(f"[D]: Added numeric value to val_stack from function definition: {val}")
+            except ValueError:
+                if op in UNARY_OPERATORS or op in BINARY_OPERATORS:
+                    op_stack.append(op)
+                    print(f"[D]: Added operator to op_stack: {op}")
+                elif op in self.symbols:
+                    val = self.symbols[op]
+                    val_stack.append(val)
+                    print(f"[D]: Added variable value to val_stack: {val}")
+                else:
+                    # Si no es reconocido, asumimos que es un operador personalizado
+                    op_stack.append(op)
+                    print(f"[D]: Added custom operator to op_stack: {op}")
 
-        id_tokens = []
-        for i in range(ctx.getChildCount()):
+        args = []
+        for i in range(1, ctx.getChildCount()):
             child = ctx.getChild(i)
-            if isinstance(child, TerminalNode) and child.getSymbol().type == gParser.ID:
-                id_tokens.append(child)
+            if not isinstance(child, TerminalNode):
+                arg = self.visit(child)
+                if arg is not None:
+                    args.insert(0, arg)
+        print(f"[D]: Function '{name}' called with arguments: {args}")
 
-        print(f"[D]: ID tokens: {[token.getText() for token in id_tokens]}")
-        print(f"[D]: Number of ID tokens: {len(id_tokens)}")
-        print(f"[D]: value {self.symbols[id_tokens[0].getText()]}")
+        for arg in args:
+            val_stack.insert(0, arg)
+        print(f"[D]: Initial stacks - Operators: {op_stack}, Values: {val_stack}")
 
-        for i in range(0, len(id_tokens)):
-            arg_name = ctx.ID(i).getText()
-            print(f"[D]: Argument {i}: {arg_name}")
+        return self.evalua_amb_pila(op_stack, val_stack)
 
-            if arg_name in self.symbols:
-                variables.append(self.symbols[arg_name])
+    def evalua_amb_pila(self, op_stack, val_stack):
+        print(
+            f"[D]: Evaluating with stacks - Operators: {op_stack}, Values: {val_stack}"
+        )
+        while op_stack:
+            print(f"[D]: Current operator stack: {op_stack}")
+            print(f"[D]: Current value stack: {val_stack}")
+            op = op_stack.pop()
+            if op in UNARY_OPERATORS:
+                if not val_stack:
+                    raise ValueError(f"Operació unària '{op}' sense valors a la pila")
+
+                val = val_stack.pop()
+                print(f"[D]: Applying unary operation '{op}' on value: {val}")
+                result = apply_unary_operation(op, val)
+                print(f"[D]: Result after unary operation: {result}")
+                val_stack.insert(0, result)
+            elif op in BINARY_OPERATORS:
+                right = val_stack.pop()
+                left = val_stack.pop()
+
+                print(f"[D]: Applying binary operation '{op}' on values: {left}, {right}")
+                result = apply_binary_operation(op, left, right)
+                print(f"[D]: Result after binary operation: {result}")
+                val_stack.insert(0, result)
             else:
                 try:
-                    if arg_name.startswith('_'):
-                        variables.append(-int(arg_name[1:]))
+                    if op.startswith('_'):
+                        val = -int(op[1:])
                     else:
-                        variables.append(int(arg_name))
+                        val = int(op)
+
+                    val_stack.insert(0, val)
+                    print(f"[D]: Added numeric value to stack: {val}")
+
                 except ValueError:
-                    if arg_name in aritmetics or arg_name in relacionals:
-                        functions.append(arg_name)
+                    # Si no es un número, comprobar si es una variable
+                    if op in self.symbols:
+                        val = self.symbols[op]
+                        val_stack.insert(0, val)
+                        print(f"[D]: Added variable value to stack: {val}")
                     else:
-                        raise ValueError(
-                        f"Unknown identifier or operator: {arg_name}")
-
-        print(f"[D]: Variables stack: {variables}")
-        print(f"[D]: Functions stack: {functions}")
-        result = self._evaluate_with_stacks(variables, functions)
+                        raise ValueError(f"Unknown operator or value: '{op}'")
+        if not val_stack:
+            raise ValueError("La pila de valors està buida després de l'operació")
+        if len(val_stack) > 1:
+            print(f"[D]: Stack after evaluation: {val_stack}")
+        result = val_stack.pop(0)
+        print(f"[D]: Final result after evaluation: {result}")
         return result
-
-    def _evaluate_with_stacks(self, variables, functions):
-        vars = variables.copy()
-        funcs = functions.copy()
-
-        if not funcs and vars:
-            return vars[0]
-
-        while funcs:
-            op = funcs.pop(0)
-            if op in aritmetics or op in relacionals:
-                if len(vars) < 2:
-                    raise ValueError(f"Not enough variables for operation '{op}'")
-                right = vars.pop()
-                left = vars.pop()
-                print(f"[D]: Operands for {op}: left={left}, right={right}")
-
-                result = apply_binary_operation(op, left, right)
-                print(f"[D]: Result of operation '{op}': {result}")
-                vars.insert(0, result)
-            elif op in unary_ops or (len(op) > 1 and op[1:] ==  ':' or op[1:] == '/'):
-                if not vars:
-                    raise ValueError(f"Not enough variables for unary operation '{op}'")
-                expr = vars.pop(0)
-                print(f"[D]: Operand for {op}: {expr}")
-
-                result = apply_unary_operation(op, expr)
-                print(f"[D]: Result of unary operation '{op}': {result}")
-                vars.insert(0, result)
-            else:
-                raise ValueError(f"Unknown operation: {op}")
-        if not vars:
-            return None
-        elif len(vars) == 1:
-            return vars[0]
-        else:
-            print(f"[D]: Warning: Multiple values left on stack: {vars}")
-            return vars[0]

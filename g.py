@@ -15,7 +15,7 @@ def main():
             parser = gParser(token_stream)
             tree = parser.root()
             print(tree.toStringTree(recog=parser))
-            visitor.visit(tree)
+            result = visitor.visit(tree)
 
 if __name__ == '__main__':
     main()
