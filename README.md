@@ -1,86 +1,68 @@
-# Intèrpret miniJ - LP Pràctica
+# Intèrpret miniJ - Pràctica de Llenguatges de Programació
+
 ---
+
 ## Universitat Politècnica de Catalunya
 ### Llenguatges de Programació
 
-
-Autora: Gina Escofet González : [gina.escofet@estudiantat.upc.edu](gina.escofet@estudiantat.upc.edu)
-
+[Gina Escofet González](gina.escofet@estudiantat.upc.edu)
 
 ---
-**Ús**
+
+## **Ús**
+Per compilar i executar l'intèrpret amb els fitxers de prova:
 ```
 make
-python3 g.py ./test/inp_test_[1-5].j > output.out
-cmp out_test_[1-5].out
+python3 g.py ./test/inp_test_[1-3].j > output.out
 ```
-
-**Estructura de l'intèrpret**
-L'intèrpret es basa en el patró visitor generat per ANTLR4, però amb les següents modificacions:
-
-- Classe EvalVisitor: Implementa tots els mètodes necessaris per avaluar els diferents nodes de l'AST
-- Classe utils.py: Classe auxiliar per guardar la lògica de les operacions.
-- Diccionari self.symbols: Emmagatzema variables i funcions definides durant l'execució
-- Sistema de piles: Per avaluar expressions i funcions utilitzo dues piles:
-		- pila_ops: Per guardar operadors
-		- pila_vals: Per guardar valors o llistes
 ---
-**Decisions d'implementació**
-1. **Gestió de variables i funcions**
-He decidit utilitzar un únic diccionari self.symbols per emmagatzemar tant variables com funcions. Això simplifica el codi però requereix comprovar el tipus quan es processa un símbol:
-```
-if nom in self.symbols:
-    if isinstance(self.symbols[nom], (list, np.ndarray)):
-        # És una funció
-    else:
-        # És una variable
-```
 
-2. **Avaluació d'expressions i funcions**
-Per avaluar expressions i funcions, he implementat un sistema basat en piles inspirat en l'exercici de Haskell fet al laboratori de la calculadora postfixa.
-- Permet treballar amb operadors unaris i binaris fàcilment
-- Simplifica la gestió d'operadors amb prioritat
-- Facilita l'avaluació recursiva de subfuncions
+## **Estructura i Decisions**
 
-Permet treballar amb operadors unaris i binaris fàcilment
-Simplifica la gestió d'operadors amb prioritat
-Facilita l'avaluació recursiva de subfuncions
+**Components Principals**
+- **g.py**: Classe que executa el main.
+- **g.g4**: Gramàtica ANTLR4.
+- **evalVisitor.py**: La classe central que hereta de gVisitor i implementa la lògica d'avaluació per a cada node de l'Abstract Syntax Tree (AST).
+- **utils.py**: Mòdul auxiliar que encapsula la lògica de les operacions unàries i binàries.
+- **./test**: Conté jocs de prova per comprovar la lògica de l'intèrpret.
 
-La funció avalua_piles és el cor d'aquest mecanisme, processant operadors i valors segons un ordre determinat.
-
-3. **Gestió d'errors**
-He implementat un sistema de gestió d'errors que:
-
-- Detecta i informa d'errors sintàctics
-- Ignora (amb comportament indefinit) errors semàntics, de tipus i d'execució
-- Utilitza blocs try-except per evitar que el programa peti completament
-- Mostra missatges d'error descriptius
-
-```
-try:
-    # Codi que pot fallar
-except Exception as e:
-    print(f"Error en operació: {str(e)}")
-    raise ValueError("Missatge d'error específic")
-```
-
-4. **Expansió de funcions**
-La implementació de la composició de funcions (\@\:) m'ha costat implementarla. Finalment he decidit:
-
-- Expandir les funcions recursivament en temps d'execució
-- Processar operadors especials com ] específicament
-- Mantenir l'ordre correcte d'avaluació per a operacions compostes
 ---
-**Principals dificultats i solucions**
-**Problema amb la composició**
-Un dels principals problemes ha estat la correcta expansió de funcions composades com:
-```
-inc =: 1 + ]
-test =: +/ @: inc @: i.
-```
-**Solució:** Implementar una expansió recursiva més completa, detectant específicament subfuncions i operadors especials com ].
 
-**Gestió d'errors**
-Un altre repte ha estat gestionar els errors sense que el programa peti, però informant adequadament quan hi ha problemes sintàctics.
+**Modularitat i Principi de Responsabilitat Única**
 
-**Solució:** Utilitzar blocs try-except a cada mètode visitor i distingir entre errors sintàctics (reportats) i errors d'execució (amb comportament indefinit).
+El disseny del projecte segueix el principi de **modularitat**, separant la lògica d’avaluació (evalVisitor) de la lògica d’operacions bàsiques (utils.py), a part de la definició de la gramàtica (g.g4). Cada funció té una única responsabilitat.
+
+La classe `evalVisitor` aplica el **principi de responsabilitat única**: cada mètode s’encarrega d’una tasca concreta (avaluar una assignació, una expressió, una funció, etc.), i la gestió de l’estat es centralitza en el diccionari d’instància `diccionari`. Aquesta organització permet que el codi sigui més llegible, fàcil de depurar i de modificar sense risc d’efectes col·laterals.
+
+---
+
+**Justificació de les Decissions**
+
+- **Diccionari unificat:** S’ha optat per un únic diccionari per gestionar variables i funcions, simplificant la resolució de noms i evitant duplicació de lògica. La principal distinció entre variables i funcions és el context en que s'utilitzen, per tant, es tracten en temps d'execució i no a la gramàtica.
+- **Gestió d’errors:** L’ús de try-except a cada mètode garanteix que els errors es gestionen localment millorant la robustesa de l’intèrpret.
+- **Extensibilitat:** L’estructura modular i la separació de responsabilitats permeten afegir fàcilment nous operadors o funcionalitats sense modificar la base del sistema.
+- **Claredat i mantenibilitat:** L’ús de docstrings i noms descriptius facilita la comprensió del codi per tercers i per a la seva pròpia evolució futura.
+
+--- 
+
+**Avaluació d'Expressions i Funcions**
+
+L'avaluació es realitza amb una lògica de stack, inspirat en la lògica de calculadores postfixes de l'exercici de Haskell. Aquesta aproximació permet:
+
+- Gestionar eficientment operadors unaris i binaris.
+- Simplificar la resolució de la precedència d'operadors.
+- Facilitar l'avaluació recursiva i la composició de funcions.
+
+He definit una funció `evalua_amb_pila` que fa ús de dos stacks `op_stack` i `val_stack` per anar operant segons el tipus d'operadors.
+
+**Gestió d'Errors**
+S'ha implementat una estratègia de gestió d'errors que utilitza try-except per a capturar i informar d'excepcions sense provocar la terminació abrupta de l'intèrpret. Proporciona missatges d'error descriptius per facilitar la depuració.
+
+---
+## Conclusions
+
+**Composició de Funcions \@\:**
+
+El principal repte per mi ha estat la correcta expansió i avaluació de funcions composades i anidades, les que utilitzen l'operador '\@\:'.
+
+**Solució:** S'ha optat per una resolució recursiva de les funcions en temps d'execució dins de `visitFuncDef` i `visitFunction`, assegurant que cada component de la funció composada s'avalua en l'ordre correcte i que les subfuncions es resolen a les seves definicions d'operadors.

@@ -88,16 +88,26 @@ def fold_op(op, expr):
 def apply_binary_operation(op, left, right):
     if op == '@:':  # Composició
         return list(np.atleast_1d(left)) + list(np.atleast_1d(right))
-
-    left_arr = np.atleast_1d(left) if not isinstance(left, np.ndarray) else left
-    right_arr = np.atleast_1d(right) if not isinstance(right, np.ndarray) else right
-
-    if op == '#':   # Màscara
-        if len(left_arr) != len(right_arr) and len(left_arr) != 1 and len(right_arr) != 1:
-            raise ValueError("Error! '#' necessita llistes de la mateixa mida.")
+    left_arr = np.atleast_1d(left) if not isinstance(left,
+                                                     np.ndarray) else left
+    right_arr = np.atleast_1d(right) if not isinstance(right,
+                                                       np.ndarray) else right
+    size_exempt_ops = ['@:', ',', '{']
+    if (op not in size_exempt_ops and
+        len(left_arr.shape) > 0 and len(right_arr.shape) > 0 and
+        left_arr.shape != right_arr.shape and
+        left_arr.size != 1 and right_arr.size != 1):
+        raise ValueError(
+            f"Error operació binària: diferent mida - {left_arr.shape} i {right_arr.shape}"
+        )
+    if op == '#':  # Màscara
+        if len(left_arr) != len(right_arr) and len(left_arr) != 1 and len(
+                right_arr) != 1:
+            raise ValueError(
+                "Error! '#' necessita llistes de la mateixa mida.")
         return right_arr[left_arr.astype(bool).tolist()]
 
-    elif op == '{':        # Indexació
+    elif op == '{':  # IndexacióMàscara
         return right_arr[left_arr]
 
     if op in aritmetics:
@@ -116,6 +126,7 @@ def apply_unary_operation(op, expr):
         r = unary_ops[op](expr)
         return r
     elif op[1:] == ':':
+        # print(f"debug: {op} {expr}")
         return apply_binary_operation(op[0], expr, expr)
     elif op[1:] == '/':
         return fold_op(op[0], expr)

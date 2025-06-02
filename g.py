@@ -1,12 +1,12 @@
 from antlr4 import *
 from gLexer import gLexer
 from gParser import gParser
-from EvalVisitor import EvalVisitor
+from evalVisitor import evalVisitor
 import sys
 
 def main():
     file_name = sys.argv[1]
-    visitor = EvalVisitor()
+    visitor = evalVisitor()
     with open(file_name, 'r') as file:
         for line in file:
             input_stream = InputStream(line)
