@@ -22,9 +22,9 @@ python3 g.py ./test/inp_test_[1-3].j > output.out
 **Components Principals**
 - **g.py**: Classe que executa el main.
 - **g.g4**: Gramàtica ANTLR4.
-- **evalVisitor.py**: La classe central que hereta de gVisitor i implementa la lògica d'avaluació per a cada node de l'Abstract Syntax Tree (AST).
-- **utils.py**: Mòdul auxiliar que encapsula la lògica de les operacions unàries i binàries.
-- **./test**: Conté jocs de prova per comprovar la lògica de l'intèrpret.
+- **evalVisitor.py**: La classe central que hereta de gVisitor i implementa la lògica d'avaluació.
+- **utils.py**: Funcions auxiliars que encapsulen la lògica de les operacions unàries i binàries.
+- **./test**: Jocs de prova comprovant la lògica de l'intèrpret.
 
 ---
 
