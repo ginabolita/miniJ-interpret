@@ -49,7 +49,7 @@ La classe `evalVisitor` aplica el **principi de responsabilitat única**: cada m
 
 L'avaluació es realitza amb una lògica de stack, inspirat en la lògica de calculadores postfixes de l'exercici de Haskell. Aquesta aproximació permet:
 
-- Gestionar eficientment operadors unaris i binaris.
+- Gestionar operadors unaris i binaris.
 - Simplificar la resolució de la precedència d'operadors.
 - Facilitar l'avaluació recursiva i la composició de funcions.
 
